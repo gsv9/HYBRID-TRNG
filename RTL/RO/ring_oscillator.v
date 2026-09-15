@@ -1,32 +1,49 @@
 `timescale 1ns / 1ps
 
-// FPGA ring oscillator primitive.
-// The enabled loop contains an ODD number of inverter LUTs.
-// This module is intended for synthesis/implementation on Xilinx FPGA.
-// SIM_DELAY is only a simulation aid; simulation jitter is NOT physical entropy.
-
 module ring_oscillator #(
-    parameter integer STAGES   = 3,
+    parameter integer STAGES    = 3,
     parameter integer SIM_DELAY = 1
 )(
     input  wire enable,
     output wire ro_out
 );
 
-    // 3, 5, and 7 are the supported configurations for this project.
     initial begin
         if ((STAGES != 3) && (STAGES != 5) && (STAGES != 7))
             $error("STAGES must be 3, 5, or 7");
     end
 
+`ifndef SYNTHESIS
+    reg ro_reg;
+    integer delay_ns;
+    integer jitter;
+    initial ro_reg = 1'b0;
+
+    always begin
+        if (!enable) begin
+            ro_reg = 1'b0;
+            @(posedge enable);
+        end
+        else begin
+            jitter = $urandom_range(0, 1);
+            delay_ns = (SIM_DELAY * STAGES) + jitter;
+            if (delay_ns < 1)
+                delay_ns = 1;
+            #(delay_ns);
+            if (enable)
+                ro_reg = ~ro_reg;
+            else
+                ro_reg = 1'b0;
+        end
+    end
+
+    assign ro_out = ro_reg;
+
+`else
     (* KEEP = "TRUE", DONT_TOUCH = "TRUE" *)
     wire [STAGES-1:0] ro;
-
     genvar i;
 
-    // First LUT is the feedback inverter and also gates the oscillator.
-    // When enable=1: ro[0] = ~ro[STAGES-1].
-    // The loop therefore has STAGES inversions.
     (* KEEP = "TRUE", DONT_TOUCH = "TRUE" *)
     LUT1 #(.INIT(2'b01)) feedback_lut (
         .I0(enable ? ro[STAGES-1] : 1'b0),
@@ -43,6 +60,6 @@ module ring_oscillator #(
         end
     endgenerate
 
-    assign ro_out = ro[STAGES-1];
-
+    assign ro_out = enable ? ro[STAGES-1] : 1'b0;
+`endif
 endmodule

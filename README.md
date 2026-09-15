@@ -28,14 +28,15 @@ Ring Oscillator Entropy + Behavioral RRAM RTN
 
 ## Main RTL Files
 
-- `RTL/rram_ro_trng_aes_uart_top.v` - final FPGA top module with hybrid TRNG, AES conditioner, and UART output.
-- `RTL/aes128_encrypt.v` - iterative AES-128 encryption core.
-- `RTL/aes_cbc_mac_conditioner.v` - AES CBC-MAC style conditioning block.
-- `RTL/entropy_accumulator_128.v` - collects entropy into 128-bit blocks.
-- `RTL/rram_ro_hybrid.v` - combines RRAM and RO entropy sources.
-- `RTL/RRAM/*.v` - behavioral RRAM/RTN model.
-- `RTL/RO_TEST/*.v` - banked ring oscillator entropy source.
-- `RTL/uart_tx.v` - UART transmitter.
+- `RTL/top/rram_ro_trng_aes_uart_top.v` - final FPGA top module with hybrid TRNG, AES conditioner, and UART output.
+- `RTL/aes/aes128_encrypt.v` - iterative AES-128 encryption core.
+- `RTL/aes/aes_cbc_mac_conditioner.v` - AES CBC-MAC style conditioning block.
+- `RTL/accumulator/entropy_accumulator_128.v` - collects entropy into 128-bit blocks.
+- `RTL/accumulator/rram_ro_hybrid_accumulator.v` - wraps the hybrid entropy source and 128-bit accumulator.
+- `RTL/hybrid/rram_ro_hybrid.v` - combines RRAM and RO entropy sources.
+- `RTL/rram/*.v` - behavioral RRAM/RTN model.
+- `RTL/ro/*.v` - banked ring oscillator entropy source.
+- `RTL/uart/uart_tx.v` - UART transmitter.
 
 ## Testbenches
 

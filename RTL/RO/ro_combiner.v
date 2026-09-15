@@ -1,37 +1,28 @@
 `timescale 1ns / 1ps
 
-// Low-utilization RO combiner.
-// The 50 asynchronous RO outputs are sampled by a 2-flop synchronizer
-// per RO, then XOR-reduced to one synchronous-domain entropy bit.
-//
-// The XOR itself is not a proof of entropy; statistical characterization
-// and hardware validation are still required.
-
-module ro_combiner (
-    input  wire        clk,
-    input  wire        rst,
-    input  wire [49:0] ro_bits_async,
-    output reg         entropy_bit
+module ro_combiner #(
+    parameter integer NUM_ROS = 50
+)(
+    input  wire             clk,
+    input  wire             rst,
+    input  wire [NUM_ROS-1:0] ro_bits_async,
+    output reg              entropy_bit
 );
 
-    (* ASYNC_REG = "TRUE" *) reg [49:0] meta_ff;
-    (* ASYNC_REG = "TRUE" *) reg [49:0] sync_ff;
+    (* ASYNC_REG = "TRUE" *) reg [NUM_ROS-1:0] meta_ff;
+    (* ASYNC_REG = "TRUE" *) reg [NUM_ROS-1:0] sync_ff;
 
-    always @(posedge clk or posedge rst) begin
+    always @(posedge clk) begin
         if (rst) begin
-            meta_ff <= 50'b0;
-            sync_ff <= 50'b0;
-        end else begin
-            meta_ff <= ro_bits_async;
-            sync_ff <= meta_ff;
-        end
-    end
-
-    always @(posedge clk or posedge rst) begin
-        if (rst)
+            meta_ff    <= {NUM_ROS{1'b0}};
+            sync_ff    <= {NUM_ROS{1'b0}};
             entropy_bit <= 1'b0;
-        else
+        end
+        else begin
+            meta_ff     <= ro_bits_async;
+            sync_ff     <= meta_ff;
             entropy_bit <= ^sync_ff;
+        end
     end
 
 endmodule
