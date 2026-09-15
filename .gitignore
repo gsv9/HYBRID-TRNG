@@ -1,0 +1,54 @@
+# Vivado generated files
+.Xil/
+*.jou
+*.log
+*.str
+*.wdb
+*.wcfg
+*.pb
+*.dcp
+*.bit
+*.bin
+*.ltx
+*.mmi
+*.mcs
+*.prm
+*.rpt~
+
+# Vivado project output directories
+*.cache/
+*.hw/
+*.ip_user_files/
+*.runs/
+*.sim/
+*.ioplanning/
+vivado_*/
+
+# Keep source project metadata if desired, but ignore generated internals
+RRAM.cache/
+RRAM.hw/
+RRAM.ioplanning/
+RRAM.ip_user_files/
+RRAM.runs/
+RRAM.sim/
+RRAM.srcs/*
+!RRAM.srcs/constrs_1/
+!RRAM.srcs/constrs_1/**
+
+# Captured TRNG/NIST data streams
+trng_*.bin
+trng_*.txt
+nist_multi_capture/
+nist_AlgorithmTesting_results/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
